@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="trubby" basedir=".">
+	<property name="tomcat_dir" value="/home/matheus/apache-tomcat-7.0.64" />
+	
+	<target name="start_tomcat">
+		<exec executable="./catalina.sh" dir="${tomcat_dir}/bin">
+			<arg line="run" />
+		</exec>
+	</target>
+	
+	<target name="shutdown_tomcat">
+		<exec executable="./catalina.sh" dir="${tomcat_dir}/bin">
+			<arg line="stop" />
+		</exec>
+	</target>
+	
+	<target name="deploy">
+		<exec executable="mvn" dir=".">
+			<arg line="clean tomcat7:undeploy tomcat7:deploy" />
+		</exec>
+	</target>
+	
+	<target name="init">
+		<antcall target="shutdown_tomcat" />
+		<antcall target="start_tomcat" />
+		<antcall target="deploy" />
+	</target>
+</project>
