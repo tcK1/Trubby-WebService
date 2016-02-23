@@ -1,5 +1,7 @@
 <?php
 
+header();
+
 echo 'Current PHP version: ' . phpversion() . "\n";
 
 define("CONSUMER_KEY", "dgqcifzjqksh");
