@@ -1,0 +1,19 @@
+[
+    {
+        "name": "oauth-php/oauth-php",
+        "version": "157",
+        "version_normalized": "157.0.0.0",
+        "source": {
+            "type": "svn",
+            "url": "http://oauth-php.googlecode.com/svn/",
+            "reference": "trunk/"
+        },
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "classmap": [
+                "library/"
+            ]
+        }
+    }
+]

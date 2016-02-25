@@ -1,0 +1,34 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "474e9c7839b1894c476eb606c5193353",
+    "content-hash": "b7a655a671e3c084d6c6f46a05a32353",
+    "packages": [
+        {
+            "name": "oauth-php/oauth-php",
+            "version": "157",
+            "source": {
+                "type": "svn",
+                "url": "http://oauth-php.googlecode.com/svn/",
+                "reference": "trunk/"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "library/"
+                ]
+            }
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

@@ -1,0 +1,25 @@
+{
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "oauth-php/oauth-php",
+                "version": "157",
+                "source": {
+                    "url": "http://oauth-php.googlecode.com/svn/",
+                    "type": "svn",
+                    "reference": "trunk/"
+                },
+                "autoload": {
+                    "classmap": ["library/"]
+                }
+            }
+        }
+    ],
+    "require": {
+        "oauth-php/oauth-php": "*"
+    },
+    "autoload": {
+        "classmap": ["include/"]
+    }
+}
