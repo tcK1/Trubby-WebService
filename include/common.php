@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 if(!isset($_SESSION)): session_start(); endif;
 
 // Add a header indicating this is an OAuth server

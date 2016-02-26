@@ -1,5 +1,5 @@
 <?php
-require_once 'include/common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // check if the login information is valid and get the user's ID
