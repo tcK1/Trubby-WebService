@@ -170,10 +170,15 @@ class OAuthServer extends OAuthRequestVerifier
 		OAuthRequestLogger::start($this);
 
 		$store = OAuthStore::instance();
+		//print_r($store);
 		$token = $this->getParam('oauth_token', true);
+		//print_r($token);
 		$rs    = $store->getConsumerRequestToken($token);
+		//print_r($rs);
+
 		if (empty($rs))
 		{
+			//die();
 			throw new OAuthException2('Unknown request token "'.$token.'"');
 		}
 

@@ -38,8 +38,6 @@ $server = $_SERVER['SERVER_NAME'];
 
 echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 
-echo $server;
-
 ?>
 <XRDS xmlns="xri://$xrds">
     <XRD xmlns:simple="http://xrds-simple.net/core/1.0" xmlns="xri://$XRD*($v*2.0)" xmlns:openid="http://openid.net/xmlns/1.0" version="2.0" xml:id="main">
