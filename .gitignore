@@ -1,6 +1,0 @@
-.htaccess
-/vendor/*
-composer.json
-composer.lock
-composer.phar
-php.ini

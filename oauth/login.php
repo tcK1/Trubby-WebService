@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var_dump($authorized);
     die();
     */
+    
     // Set the request token to be authorized or not authorized
     // When there was a oauth_callback then this will redirect to the consumer
     //$server->authorizeFinish($authorized, $id);
