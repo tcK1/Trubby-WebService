@@ -1,14 +1,25 @@
 <?php
-require_once 'include/common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
+
 
 if (OAuthRequestVerifier::requestIsSigned()) {
     try {
         $req = new OAuthRequestVerifier();
         $id = $req->verify();
-
+    
 	// If we have an ID, then login as that user (for this requeste
         if ($id) {
-            echo 'Hello ' . $id;
+            //$req->transcodeParams();
+            //print_r($req->getNormalizedParams());
+            print_r('GET:');
+            echo '<br>';
+            print_r($_GET);
+            print_r('POST:');
+            echo '<br>';
+            print_r($_POST);
+            echo '<br>';
+            print_r($req);
+            //echo 'Hello ' . $id;
         }
     }
     catch (OAuthException $e) {

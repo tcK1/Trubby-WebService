@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 define('OAUTH_HOST', 'http://' . $_SERVER['SERVER_NAME']);
 
@@ -11,7 +11,7 @@ $options = array(
     'consumer_secret' => 'c02ea3db6c45d66bfc27bdf4bf6eed80',
     'server_uri' => OAUTH_HOST,
     'request_token_uri' => OAUTH_HOST . '/oauth/request_token.php',
-    'authorize_uri' => OAUTH_HOST . '/oauth/login.php',
+    'authorize_uri' => OAUTH_HOST . '/oauth/authorize.php',
     'access_token_uri' => OAUTH_HOST . '/oauth/access_token.php'
 );
 
@@ -29,12 +29,19 @@ else {
     // get an access token
     $oauthToken = $_GET['oauth_token'];
     $tokenResultParams = $_GET;
-
+    
+    $testes = array( 'debug' => 'true', 'teste' => 'testando');
+    
     OAuthRequester::requestAccessToken($options['consumer_key'], $tokenResultParams['oauth_token'], $id, 'POST', $_GET);
-    $request = new OAuthRequester(OAUTH_HOST . '/test_request.php', 'GET', $tokenResultParams);
+    $request = new OAuthRequester(OAUTH_HOST . '/test_request.php', 'POST', $testes);
     $result = $request->doRequest(0);
     if ($result['code'] == 200) {
-        var_dump($result['body']);
+        //var_dump($result['body']);
+        echo '<pre>';
+        //print_r($result);
+        print_r($result['body']);
+        echo '</pre>';
+        
     }
     else {
         echo 'Error';
