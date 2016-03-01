@@ -163,7 +163,7 @@ class OAuthRequester extends OAuthRequestSigner
 		$store	= OAuthStore::instance();
 		$r		= $store->getServer($consumer_key, $usr_id);
 		$uri 	= $r['request_token_uri'];
-		
+
 		$oauth 	= new OAuthRequester($uri, $method, $params);
 		$oauth->sign($usr_id, $r, '', 'requestToken');
 		$text	= $oauth->curl_raw($curl_options, (isset($options['oauth_as_header']) ? $options['oauth_as_header'] : true));

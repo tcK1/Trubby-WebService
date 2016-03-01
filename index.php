@@ -11,6 +11,7 @@ $METODO = (string) $_SERVER['REQUEST_METHOD']; // Método de chamada da API
 list($CHAVE, $SEGREDO, $SECAO, $USUARIO, $PRODUTO) = explode("/", $URL);
 
 // Caso as variaveis de usuario e produto estejam definidas, adiciona elas ao array de parametros
+$parametros = array();
 if (!empty($USUARIO)){
     $parametros['USUARIO'] = $USUARIO;
 }
