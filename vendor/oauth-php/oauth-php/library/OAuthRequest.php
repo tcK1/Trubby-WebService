@@ -442,9 +442,15 @@ class OAuthRequest
 			$name_encoded = $this->urlencode($name);
 			if (is_array($value))
 			{
-				foreach ($value as $v)
+				foreach ($value as $k => $v)
 				{
-					$this->param[$name_encoded][] = $this->urlencode($v);
+					if (is_array($v)){
+						foreach($v as $z => $a){
+							$this->param[$name_encoded][$k][$z] = $this->urlencode($a);
+						}
+					} else {
+						$this->param[$name_encoded][$k] = $this->urlencode($v);
+					}
 				}
 			}
 			else
@@ -836,7 +842,7 @@ class OAuthRequest
 			}
 			$uri = 'http://'.$uri;
 		}
-		
+
 		header('HTTP/1.1 302 Found');
 		header('Location: '.$uri);
 		echo '';

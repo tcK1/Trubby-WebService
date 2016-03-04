@@ -24,6 +24,10 @@ $entrada = leJSON(); // Dados recebidos pela requisição HTTP
 // Caso exista conteudo no corpo da requisição HTTP, ele concatena com os dados da URL
 if(!empty($entrada)) $parametros = array_merge($entrada, $parametros);
 
+$parametrosSerializados[0] = serialize($parametros);
+
+//print_r($parametrosSerializados); die();
+
 // Variáveis para autenticação do OAuth
 $id = 1;
 
@@ -37,6 +41,7 @@ $opcoes = array(
     'access_token_uri' => SERVIDOR . '/oauth/access_token.php'
 );
 
+
 session_start();
 if(isset($_SESSION['opcoes'])) $opcoes = $_SESSION['opcoes'];
 
@@ -48,7 +53,7 @@ if (empty($_GET['oauth_token'])) { // Caso ainda não possua um token, faz a req
     $_SESSION['METODO'] = $METODO;
     $_SESSION['SECAO'] = $SECAO;
     $_SESSION['opcoes'] = $opcoes;
-    $_SESSION['parametros'] = $parametros;
+    $_SESSION['parametros'] = $parametrosSerializados;
 
     $tokenResultParams = OAuthRequester::requestRequestToken($opcoes['consumer_key'], $id);
 

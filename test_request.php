@@ -1,25 +1,29 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
+session_start();
+
 
 if (OAuthRequestVerifier::requestIsSigned()) {
     try {
         $req = new OAuthRequestVerifier();
         $id = $req->verify();
     
-	// If we have an ID, then login as that user (for this requeste
+	    // If we have an ID, then login as that user (for this requeste
         if ($id) {
-            //$req->transcodeParams();
-            //print_r($req->getNormalizedParams());
+            
+            $entradaSerializada = unserialize($_POST[0]);
+            print_r($entradaSerializada);
+            
+            print_r('SESSION:');
+            echo '<br>';
+            print_r($_SESSION);
             print_r('GET:');
             echo '<br>';
             print_r($_GET);
             print_r('POST:');
             echo '<br>';
             print_r($_POST);
-            echo '<br>';
-            print_r($req);
-            //echo 'Hello ' . $id;
         }
     }
     catch (OAuthException $e) {
