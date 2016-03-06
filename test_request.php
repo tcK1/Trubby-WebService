@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
 session_start();
 
-
 if (OAuthRequestVerifier::requestIsSigned()) {
     try {
         $req = new OAuthRequestVerifier();
@@ -12,9 +11,12 @@ if (OAuthRequestVerifier::requestIsSigned()) {
 	    // If we have an ID, then login as that user (for this requeste
         if ($id) {
             
-            $entradaSerializada = unserialize($_POST[0]);
-            print_r($entradaSerializada);
+            //$entradaSerializada = unserialize($_POST[0]);
             
+            // Formata os dados em um JSON
+            echo json_encode(unserialize($_POST[0]));
+            
+            /*
             print_r('SESSION:');
             echo '<br>';
             print_r($_SESSION);
@@ -24,6 +26,7 @@ if (OAuthRequestVerifier::requestIsSigned()) {
             print_r('POST:');
             echo '<br>';
             print_r($_POST);
+            */
         }
     }
     catch (OAuthException $e) {

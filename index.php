@@ -1,14 +1,18 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/include/func.php';
 
 define('SERVIDOR', 'http://' . $_SERVER['SERVER_NAME']); // Caminho do servidor
 
 $URL = $_REQUEST['URL']; // Variaveis recebidas após a primeira "/"
 $METODO = (string) $_SERVER['REQUEST_METHOD']; // Método de chamada da API
 
+// Caso o usuário da API queira registrar uma nova conta, sera redirecionado para a página
+if (strcasecmp($URL, 'registrar') == 0){
+    header('Location: /registrar.php'); die();
+}
+
 // Cria as variáveis em relação a url recebida
-list($CHAVE, $SEGREDO, $SECAO, $USUARIO, $PRODUTO) = explode("/", $URL);
+list($CHAVE, $SEGREDO, $SECAO, $USUARIO, $PRODUTO, $EXTRA) = explode("/", $URL);
 
 // Caso as variaveis de usuario e produto estejam definidas, adiciona elas ao array de parametros
 $parametros = array();
@@ -19,14 +23,13 @@ if (!empty($PRODUTO)){
     $parametros['PRODUTO'] = $PRODUTO;
 }
 
-$entrada = leJSON(); // Dados recebidos pela requisição HTTP
+$entrada = json_decode(file_get_contents('php://input'), true); // Dados recebidos pela requisição HTTP
 
 // Caso exista conteudo no corpo da requisição HTTP, ele concatena com os dados da URL
-if(!empty($entrada)) $parametros = array_merge($entrada, $parametros);
+if(!empty($entrada)) $parametros = array_merge($parametros, $entrada);
 
+// Serializa o array de parametros para passar para a requisição
 $parametrosSerializados[0] = serialize($parametros);
-
-//print_r($parametrosSerializados); die();
 
 // Variáveis para autenticação do OAuth
 $id = 1;
@@ -40,7 +43,6 @@ $opcoes = array(
     'authorize_uri' => SERVIDOR . '/oauth/authorize.php',
     'access_token_uri' => SERVIDOR . '/oauth/access_token.php'
 );
-
 
 session_start();
 if(isset($_SESSION['opcoes'])) $opcoes = $_SESSION['opcoes'];
@@ -90,15 +92,23 @@ else { // Ja com o token, pode fazer o chamado
             header('Location: /index.php'); // **TROCAR POR PAG DE ERRO DE CHAMADA**
             break;
     }
-
+ 
     $resultado = $chamado->doRequest(0); // Executa a função
     
     if ($resultado['code'] == 200) {
-        //echo escreveJSON($resultado['body']);
+        header('Content-Type: application/json; charset=utf-8');
+            
         echo $resultado['body'];
+        
+        session_unset();
+        session_destroy();
+        die();
     }
     else {
         echo 'Error';
+        session_unset();
+        session_destroy();
+        die();
     }
 }
 

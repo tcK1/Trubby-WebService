@@ -1,22 +1,9 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
-// 
-$dados = array_values($_SESSION)[0];
-/*print "<pre>";
-print_r($aux);
-print_r($aux[consumer_key]);
-print_r($aux[consumer_secret]);
-print "</pre>";
-/*print "<pre>";
-print_r($_SESSION);
-print "</pre>";
-print "<pre>";
-print_r($_GET);
-print "</pre>";
-*/
+$dados = $_SESSION['opcoes'];
 
-// check if the login information is valid and get the user's ID
+// Ve se o valor recebido é valido e recupera o id do usuário
 $stmt = $db->prepare('SELECT osr_usa_id_ref FROM oauth_server_registry WHERE osr_consumer_key = :consumer_key');
 $stmt->execute(array(
     'consumer_key' => $dados[consumer_key]
@@ -31,13 +18,10 @@ $id = $resultado['osr_usa_id_ref'];
 $stmt->closeCursor();
 
 // Check if there is a valid request token in the current request.
-// This returns an array with the consumer key, consumer secret, token,
-// token secret and token type.
+// Ve se existe um token valido na atual requisição
 $rs = $server->authorizeVerify();
 
-// See if the user clicked the 'allow' submit button (or whatever you choose)
-//$authorized = array_key_exists('allow', $_POST);
-
+// Ve se a conbinação de chave e segredo existe
 $stmt = $db->prepare('SELECT * FROM oauth_server_registry WHERE osr_consumer_key = :consumer_key AND osr_consumer_secret = :consumer_secret');
 $stmt->execute(array(
     'consumer_key' => $dados[consumer_key],
@@ -53,14 +37,7 @@ if (!$resultado) {
     die();
 }
 
-/*
-print_r($_POST);
-echo $authorized;
-var_dump($authorized);
-die();
-*/
-
 // Set the request token to be authorized or not authorized
-// When there was a oauth_callback then this will redirect to the consumer
-//$server->authorizeFinish($authorized, $id);
+// Faz a requisição ficar autorizada ou não
+// Retorna para o oauth_callback
 $server->authorizeFinish($autorizar, $id);
