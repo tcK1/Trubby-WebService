@@ -7,7 +7,7 @@ header('X-XRDS-Location: http://' . $_SERVER['SERVER_NAME'] .
      '/vendor/oauth-php/oauth-php/example/server/www/services.xrds.php');
      
 // Connect to database
-$db = new PDO('mysql:host=localhost;dbname=oauth', 'ztck', '12346Kaic');
+$db = new PDO('mysql:host=localhost;dbname=oauth', 'root', '12346Kaic');
 
 // Create a new instance of OAuthStore and OAuthServer
 $store = OAuthStore::instance('PDO', array('conn' => $db));
