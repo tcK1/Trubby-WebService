@@ -1,32 +1,27 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
+include $_SERVER['DOCUMENT_ROOT'].'/chamado/teste.php';
+
 session_start();
 
 if (OAuthRequestVerifier::requestIsSigned()) {
     try {
         $req = new OAuthRequestVerifier();
         $id = $req->verify();
-    
 	    // If we have an ID, then login as that user (for this requeste
         if ($id) {
             
-            //$entradaSerializada = unserialize($_POST[0]);
+            // Recupere os valores nos arrays globais GET ou POST
+            if(!empty($_GET))   $parametros = unserialize($_GET[0]);
+            else                $parametros = unserialize($_POST[0]);
+            
             
             // Formata os dados em um JSON
-            echo json_encode(unserialize($_POST[0]));
-            
-            /*
-            print_r('SESSION:');
-            echo '<br>';
-            print_r($_SESSION);
-            print_r('GET:');
-            echo '<br>';
-            print_r($_GET);
-            print_r('POST:');
-            echo '<br>';
-            print_r($_POST);
-            */
+            //echo json_encode(unserialize($_GET[0]));
+            //teste($parametros);
+            //print_r(teste\seraquevai());
+            echo json_encode(teste\seraquevai());
         }
     }
     catch (OAuthException $e) {
@@ -38,4 +33,8 @@ if (OAuthRequestVerifier::requestIsSigned()) {
         echo $e->getMessage();
         exit();
     }
+}
+
+function teste($parametros){
+    echo json_encode($parametros);
 }

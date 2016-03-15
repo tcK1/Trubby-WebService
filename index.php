@@ -16,6 +16,9 @@ list($CHAVE, $SEGREDO, $SECAO, $USUARIO, $PRODUTO, $EXTRA) = explode("/", $URL);
 
 // Caso as variaveis de usuario e produto estejam definidas, adiciona elas ao array de parametros
 $parametros = array();
+if (!empty($SECAO)){
+    $parametros['SECAO'] = $SECAO;
+}
 if (!empty($USUARIO)){
     $parametros['USUARIO'] = $USUARIO;
 }
@@ -71,19 +74,21 @@ else { // Ja com o token, pode fazer o chamado
     OAuthRequester::requestAccessToken($_SESSION['opcoes']['consumer_key'], $tokenResultParams['oauth_token'], $id, 'POST', $_GET);
 
     // De acordo com a seção definida na URL, redireciona para a página responsalvel.
-
     switch ($_SESSION['SECAO']){
+        case 'usuario':
+            $chamado = new OAuthRequester(SERVIDOR . '/chamado/usuario.php', $_SESSION['METODO'], $_SESSION['parametros']);
+            break;
         case 'estoque':
-            $chamado = new OAuthRequester(SERVIDOR . '/controle/estoque.php', $_SESSION['METODO'], $_SESSION['parametros']);
+            $chamado = new OAuthRequester(SERVIDOR . '/chamado/estoque.php', $_SESSION['METODO'], $_SESSION['parametros']);
             break;
         case 'receita':
-            $chamado = new OAuthRequester(SERVIDOR . '/controle/receita.php', $_SESSION['METODO'], $_SESSION['parametros']);
+            $chamado = new OAuthRequester(SERVIDOR . '/chamado/receita.php', $_SESSION['METODO'], $_SESSION['parametros']);
             break;
         case 'cardapio':
-            $chamado = new OAuthRequester(SERVIDOR . '/controle/cardapio.php', $_SESSION['METODO'], $_SESSION['parametros']);
+            $chamado = new OAuthRequester(SERVIDOR . '/chamado/cardapio.php', $_SESSION['METODO'], $_SESSION['parametros']);
             break;
         case 'caixa':
-            $chamado = new OAuthRequester(SERVIDOR . '/controle/caixa.php', $_SESSION['METODO'], $_SESSION['parametros']);
+            $chamado = new OAuthRequester(SERVIDOR . '/chamado/caixa.php', $_SESSION['METODO'], $_SESSION['parametros']);
             break;
         case 'teste':
             $chamado = new OAuthRequester(SERVIDOR . '/test_request.php', $_SESSION['METODO'], $_SESSION['parametros']);
