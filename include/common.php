@@ -12,6 +12,7 @@ $db = new PDO('mysql:host=localhost;dbname=oauth', 'ztck', '12346Kaic');
 // Cria a database para modificação no banco
 $dbt = new PDO('mysql:host=localhost;dbname=trubby', 'ztck', '12346Kaic');
 
+
 // Cria nova instancia do OAuthStore e OAuthServer
 $store = OAuthStore::instance('PDO', array('conn' => $db));
 $server = new OAuthServer();
