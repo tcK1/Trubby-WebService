@@ -44,4 +44,30 @@
         mysqli_close($BD);
         return $quantidade;
     }
+    
+    //calcula a media de gasto por cleinte em um determinado periodo de tempo
+    function ticketMedioTempo($idUsuario, $dataInicial, $dataFinal){
+        $totalVenda =0;
+        $numeroClientes =0;
+        $BD = new mysqli('54.207.22.190:3306', 'trubby', 'raiztrubby', 'trubby');
+        //ve o id das vendas no tempo determinado
+        $sql = "SELECT `id_venda` FROM `vendas` WHERE `id_usuario` =$idUsuario AND `data` BETWEEN '$dataInicial' AND '$dataFinal'";
+        //echo $sql."<br>";
+        $query = $BD->query($sql);
+        while ($dados = $query->fetch_assoc()) {
+            $numeroClientes++;
+            $idVenda = $dados['id_venda'];
+            //ve o preco de cada venda
+            $sql2 = "SELECT SUM( `quantidade` ) FROM `vendas_itens` WHERE `id_venda` =$idVenda";
+            //echo $sql2."<br>";
+            $query2 = $BD->query($sql2);
+            while ($dados2 = $query2->fetch_assoc()) {
+                $precoVenda = $dados2['SUM( `quantidade` )'];
+                $totalVenda = $totalVenda + $precoVenda;
+            }
+        }
+        mysqli_close($BD);
+        $ticketMedio = $totalVenda/$numeroClientes;
+        return $ticketMedio;
+    }
 ?>
