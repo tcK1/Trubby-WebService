@@ -16,7 +16,6 @@
             'dataFinal' =>$dataFinal,
             'nomeProduto' =>$nomeProduto
         ));
-        echo $nomeProduto;
         //echo $sql."<br>";
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         $quantidade = $resultado['SUM( `quantidade` )'];
@@ -67,6 +66,15 @@
         $numeroClientes =0;
         $BD = new mysqli('54.207.22.190:3306', 'trubby', 'raiztrubby', 'trubby');
         //ve o id das vendas no tempo determinado
+         $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT SUM( `quantidade` ) FROM vendas_itens INNER JOIN vendas 
+            ON vendas_itens.id_venda = vendas.id_venda
+            AND id_usuario = :idUsuario
+            AND id_produto = ( SELECT id_produto FROM produto WHERE nome = :nomeProduto )
+            AND `data`
+            BETWEEN :dataInicial AND :dataFinal');
+        
+        
         $sql = "SELECT `id_venda` FROM `vendas` WHERE `id_usuario` =$idUsuario AND `data` BETWEEN '$dataInicial' AND '$dataFinal'";
         //echo $sql."<br>";
         $query = $BD->query($sql);
@@ -94,17 +102,24 @@
     
     //calcula o faturamento em determinado tempo (em um dia por exemplo, semana, mes...)
     function faturamentoEmTempo($idUsuario, $dataInicial, $dataFinal){
-        $BD = new mysqli('54.207.22.190:3306', 'trubby', 'raiztrubby', 'trubby');
         $faturamento =0;
-        $sql = "SELECT SUM( `preco_venda` ) FROM `vendas_itens` WHERE `id_venda` IN (
-                SELECT `id_venda` FROM `vendas` WHERE `id_usuario` ='$idUsuario' AND `data`
-                BETWEEN '$dataInicial'  AND '$dataFinal')";
+		$stmt = $GLOBALS['dbt']->prepare(
+            "SELECT SUM( `preco_venda` )
+			FROM `vendas_itens`
+			INNER JOIN `vendas` ON `vendas_itens`.`id_venda` = `vendas`.`id_venda`
+			AND `data`
+			BETWEEN :dataInicial
+			AND :dataFinal
+			AND `id_usuario` = :idUsuario"
+		);
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
         
-        $query = $BD->query($sql);
-        while ($dados = $query->fetch_assoc()) {
-            $faturamento = $dados['SUM( `preco_venda` )'];
-        }
-        mysqli_close($BD);
+		$resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+		$faturamento = $resultado['SUM( `preco_venda` )'];
         return $faturamento;
     }
     
