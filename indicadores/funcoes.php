@@ -27,18 +27,31 @@
         $quantidade =0;
         //primeiro ve quais produtos usam aquele item do estoque
         $stmt = $GLOBALS['dbt']->prepare(
-            'SELECT `id_ficha` , `quantidade_brt` FROM `ingredientes_uso` WHERE `id_estoque` = (
-            SELECT `id_produto` FROM `produto` WHERE `nome` = :nomeEstoque AND `id_produto`IN (
-            SELECT `id_produto` FROM `estoque`WHERE `id_usuario` = :idUsuario))');
+            'SELECT `id_ficha` , `quantidade_brt`
+            FROM `ingredientes_uso`
+            WHERE `id_estoque` = (
+            SELECT `estoque`.`id_produto`
+            FROM `produto`
+            INNER JOIN `estoque` ON `produto`.`id_produto` = `estoque`.`id_produto`
+            AND `nome` = :nomeEstoque
+            AND `estoque`.`id_produto`
+            AND `estoque`.`id_usuario` = :idUsuario)'
+        );
         $stmt->execute(array(
             'nomeEstoque' => $nomeEstoque,
             'idUsuario' =>$idUsuario
         ));
         
         $stmt2 = $GLOBALS['dbt']->prepare(
-                'SELECT SUM( `quantidade` ) FROM `vendas_itens` WHERE `id_venda` IN (
-                SELECT `id_venda` FROM `vendas` WHERE `id_usuario` = :idUsuario AND `data` 
-                BETWEEN :dataInicial AND :dataFinal) AND `id_produto` = :idProduto');
+            'SELECT SUM( `quantidade` )
+            FROM `vendas_itens`
+            INNER JOIN `vendas` ON `vendas_itens`.`id_venda` = `vendas`.`id_venda`
+            AND `vendas`.`id_usuario` = :idUsuario
+            AND `data`
+            BETWEEN :dataInicial
+            AND :dataFinal
+            AND `vendas_itens`.`id_produto` =:idProduto'
+        );
         
         //chama a funcao quantidadeProdutoVendidoTempo para todos esses produtos
         while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
