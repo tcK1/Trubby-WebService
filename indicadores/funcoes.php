@@ -64,34 +64,34 @@
     function ticketMedioTempo($idUsuario, $dataInicial, $dataFinal){
         $totalVenda =0;
         $numeroClientes =0;
-        $BD = new mysqli('54.207.22.190:3306', 'trubby', 'raiztrubby', 'trubby');
         //ve o id das vendas no tempo determinado
-         $stmt = $GLOBALS['dbt']->prepare(
-            'SELECT SUM( `quantidade` ) FROM vendas_itens INNER JOIN vendas 
-            ON vendas_itens.id_venda = vendas.id_venda
-            AND id_usuario = :idUsuario
-            AND id_produto = ( SELECT id_produto FROM produto WHERE nome = :nomeProduto )
-            AND `data`
-            BETWEEN :dataInicial AND :dataFinal');
-        
-        
-        $sql = "SELECT `id_venda` FROM `vendas` WHERE `id_usuario` =$idUsuario AND `data` BETWEEN '$dataInicial' AND '$dataFinal'";
-        //echo $sql."<br>";
-        $query = $BD->query($sql);
-        while ($dados = $query->fetch_assoc()) {
-            $numeroClientes++;
+		$stmt = $GLOBALS['dbt']->prepare(
+            'SELECT `id_venda` FROM `vendas` WHERE `id_usuario` = :idUsuario 
+			AND `data` BETWEEN :dataInicial AND :dataFinal'
+		);
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
+		//ve o preco de cada venda
+		$stmt2 = $GLOBALS['dbt']->prepare(
+            "SELECT SUM( `quantidade` ) FROM `vendas_itens` WHERE `id_venda` = :idVenda"
+		);
+		
+		while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$numeroClientes++;
             $idVenda = $dados['id_venda'];
-            //ve o preco de cada venda
-            $sql2 = "SELECT SUM( `quantidade` ) FROM `vendas_itens` WHERE `id_venda` =$idVenda";
-            //echo $sql2."<br>";
-            $query2 = $BD->query($sql2);
-            while ($dados2 = $query2->fetch_assoc()) {
+			
+			$stmt2->execute(array(
+                'idVenda' => $idVenda
+            ));
+			while ($dados2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
                 $precoVenda = $dados2['SUM( `quantidade` )'];
                 $totalVenda = $totalVenda + $precoVenda;
             }
-        }
-        mysqli_close($BD);
-        $ticketMedio = $totalVenda/$numeroClientes;
+		}
+		$ticketMedio = $totalVenda/$numeroClientes;
         return $ticketMedio;
     }
     
