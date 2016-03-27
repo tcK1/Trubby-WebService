@@ -12,5 +12,9 @@
     echo "INDEX - ticket medio: ".$ticketMedio."<br>";
     
     $faturamento = faturamentoEmTempo(10, '0000-00-00 00:00:00', '1000-00-00 00:00:00');
-    echo "INDEX - faturamento: ".$faturamento."<br>";
+    echo "INDEX - faturamento tempo: ".$faturamento."<br>";
+    
+    
+    $fatura = faturamentoDeterminadoProduto('abobora', 10,  '0000-00-00 00:00:00', '1000-00-00 00:00:00');
+    echo "INDEX - faturamento abobora: ".$fatura."<br>";
 ?>

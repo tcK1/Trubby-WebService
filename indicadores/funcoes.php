@@ -138,8 +138,23 @@
     
     //calcula quando a pessoa faturou com determinado produto em um tempo
     //pode ser usado para ver qua item da mais faturamento, por exemplo
-    function faturamentoDeterminadoProduto(){
-        
+    function faturamentoDeterminadoProduto($nomeProduto, $idUsuario,  $dataInicial, $dataFinal){
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT SUM( `preco_venda` )  FROM vendas_itens INNER JOIN vendas 
+            ON vendas_itens.id_venda = vendas.id_venda
+            AND id_usuario = :idUsuario
+            AND id_produto = ( SELECT id_produto FROM produto WHERE nome = :nomeProduto )
+            AND `data`
+            BETWEEN :dataInicial AND :dataFinal');
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+            'nomeProduto' =>$nomeProduto
+        ));
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $faturamento = $resultado['SUM( `preco_venda` )'];
+        return $faturamento;
     }
     
 ?>
