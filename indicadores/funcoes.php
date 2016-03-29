@@ -74,7 +74,7 @@
     }
     
     //calcula a media de gasto por cleinte em um determinado periodo de tempo
-    function ticketMedioTempo($idUsuario, $dataInicial, $dataFinal){
+    function mediaPorVenda($idUsuario, $dataInicial, $dataFinal){
         $totalVenda =0;
         $numeroClientes =0;
         //ve o id das vendas no tempo determinado
@@ -110,7 +110,21 @@
     
     //calcular em toda a historia? ou da semana anterior? mes anterior? apenas nos dias que vendeu algo
     function mediaFaturamentoDiario($idUsuario, $dataInicial, $dataFinal){
-         
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT AVG(  `somas` ) 
+            FROM  `vendas_dia` 
+            WHERE  `data` 
+            BETWEEN  :dataInicial
+            AND  :dataFinal
+            AND  `id_usuario` =:idUsuario');
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $faturamento = $resultado['AVG( `somas` )'];
+        return $faturamento;
     }
     
     //calcula o faturamento em determinado tempo (em um dia por exemplo, semana, mes...)
