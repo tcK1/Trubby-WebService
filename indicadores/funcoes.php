@@ -75,37 +75,28 @@
     
     //calcula a media de gasto por cleinte em um determinado periodo de tempo
     function mediaPorVenda($idUsuario, $dataInicial, $dataFinal){
-        $totalVenda =0;
-        $numeroClientes =0;
-        //ve o id das vendas no tempo determinado
-		$stmt = $GLOBALS['dbt']->prepare(
-            'SELECT `id_venda` FROM `vendas` WHERE `id_usuario` = :idUsuario 
-			AND `data` BETWEEN :dataInicial AND :dataFinal'
-		);
+       
+    $stmt = $GLOBALS['dbt']->prepare(
+        'SELECT AVG(  `total` ) 
+        FROM (
+            SELECT SUM(  `preco_venda` ) AS total
+            FROM  `vendas_itens` 
+            INNER JOIN  `vendas` ON  `vendas_itens`.`id_venda` =  `vendas`.`id_venda` 
+            AND  `id_usuario` = :idUsuario
+            AND  `data` 
+            BETWEEN  :dataInicial
+            AND  :dataFinal
+            GROUP BY  `vendas_itens`.`id_venda`
+        )tabela');
         $stmt->execute(array(
             'idUsuario' => $idUsuario,
             'dataInicial' =>$dataInicial,
             'dataFinal' =>$dataFinal,
         ));
-		//ve o preco de cada venda
-		$stmt2 = $GLOBALS['dbt']->prepare(
-            "SELECT SUM( `quantidade` ) FROM `vendas_itens` WHERE `id_venda` = :idVenda"
-		);
-		
-		while ($dados = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$numeroClientes++;
-            $idVenda = $dados['id_venda'];
-			
-			$stmt2->execute(array(
-                'idVenda' => $idVenda
-            ));
-			while ($dados2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
-                $precoVenda = $dados2['SUM( `quantidade` )'];
-                $totalVenda = $totalVenda + $precoVenda;
-            }
-		}
-		$ticketMedio = $totalVenda/$numeroClientes;
-        return $ticketMedio;
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $media = $resultado['AVG(  `total` )'];
+        return $media;
+        
     }
     
     //calcular em toda a historia? ou da semana anterior? mes anterior? apenas nos dias que vendeu algo
