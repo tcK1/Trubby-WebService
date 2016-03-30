@@ -162,4 +162,25 @@
         return $faturamento;
     }
     
+    function estoqueGastoUsuario($idUsuario,  $dataInicial, $dataFinal){
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT produto.nome, SUM(  `gasto` ) 
+            FROM estoque_gasto
+            INNER JOIN estoque ON estoque_gasto.`id_produto` = estoque.`id_produto` 
+            INNER JOIN produto ON estoque_gasto.`id_produto` = produto.`id_produto` 
+            AND estoque.id_usuario =:idUsuario
+            AND  `data` 
+            BETWEEN  :dataInicial
+            AND  :dataFinal
+            GROUP BY estoque_gasto.`id_produto` 
+            ORDER BY SUM(  `gasto` ) DESC ');
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+    
 ?>
