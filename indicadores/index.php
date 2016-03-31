@@ -20,4 +20,9 @@
     
     $fatura = mediaFaturamentoDiario(10,  '0000-00-00 00:00:00', '3000-00-00 00:00:00');
     echo "INDEX - faturamento medio diario: ".$faturamento."<br>";
+    
+    $resultado = previsaoFimEstoque(10);
+    print_r($resultado);
+        
+    
 ?>

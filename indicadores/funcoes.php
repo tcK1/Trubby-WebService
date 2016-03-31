@@ -162,9 +162,11 @@
         return $faturamento;
     }
     
+    //funcao que retorna o quanto de cada item foi gasto em determinado tempo
+    // retorna um arranjo contendo o nome e a quantidade gasto de cada item
     function estoqueGastoUsuario($idUsuario,  $dataInicial, $dataFinal){
         $stmt = $GLOBALS['dbt']->prepare(
-            'SELECT produto.nome, SUM(  `gasto` ) 
+            'SELECT estoque_gasto.id_produto, produto.nome, SUM(  `gasto` ) AS gasto
             FROM estoque_gasto
             INNER JOIN estoque ON estoque_gasto.`id_produto` = estoque.`id_produto` 
             INNER JOIN produto ON estoque_gasto.`id_produto` = produto.`id_produto` 
@@ -173,14 +175,42 @@
             BETWEEN  :dataInicial
             AND  :dataFinal
             GROUP BY estoque_gasto.`id_produto` 
-            ORDER BY SUM(  `gasto` ) DESC ');
+            ORDER BY SUM(`gasto`) DESC '
+        );
         $stmt->execute(array(
             'idUsuario' => $idUsuario,
             'dataInicial' =>$dataInicial,
-            'dataFinal' =>$dataFinal,
+            'dataFinal' =>$dataFinal
         ));
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $resultado;
     }
     
+    //ve o quanto foi gasto de estoque na semana anterior 
+    //com base nisso, tenta prever quantos dias irao durar o estoque que você possui
+    //retorna um arranjo contendo o nome do item e quantas semanas tem para ele acabar
+    function previsaoFimEstoque($idUsuario){
+        $dataAtual = date('y-m-d H:i:s');
+        $semanaPassada = date('y-m-d H:i:s', strtotime('-1 week'));
+        //ve quanto foi gasto de cada item em uma semana
+        $gastosEstoque = estoqueGastoUsuario($idUsuario,$semanaPassada,$dataAtual);
+        //ve o quanto tem
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT  `quantidade` 
+            FROM estoque
+            WHERE  `id_produto` =:idProduto'
+        );
+        //echo count($gastosEstoque);
+        $aux = 0;
+        $estoque = array();;
+        while($item = array_shift($gastosEstoque)){
+            $stmt->execute(array(
+                'idProduto' => $item['id_produto']
+            ));
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $restante = $resultado['quantidade']/$item['gasto'];
+            array_push($estoque,$item['nome'],$restante);
+        }
+        return $estoque;
+    }
 ?>
