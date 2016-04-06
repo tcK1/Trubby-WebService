@@ -22,6 +22,12 @@
     echo "INDEX - faturamento medio diario: ".$faturamento."<br>";
     
     $resultado = previsaoFimEstoque(10);
+    echo "previsao fim do estoque:  ";
+    print_r($resultado);
+    echo "<br>";
+    echo "<br>";
+    echo "pacotes de venda:  ";
+    $resultado = vendaCasada(10);
     print_r($resultado);
         
     

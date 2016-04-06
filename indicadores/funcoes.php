@@ -213,4 +213,27 @@
         }
         return $estoque;
     }
+    
+    //ve qual é a combinação de produtos mais vendidos
+    function vendaCasada($id_usuario){
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT tst.id_venda, vendas_itens.id_produto, tst.contador
+            FROM vendas_itens
+            INNER JOIN (
+            
+            SELECT vendas_itens.id_venda, COUNT( * ) AS contador
+            FROM vendas_itens
+            INNER JOIN vendas ON vendas.`id_venda` = vendas_itens.`id_venda`
+            AND id_usuario =id_usuario
+            GROUP BY vendas_itens.`id_venda`
+            HAVING COUNT( vendas_itens.`id_venda` ) >1
+            ) AS tst ON vendas_itens.id_venda = tst.id_venda
+            ORDER BY tst.contador DESC '
+        );
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario
+        ));
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
 ?>
