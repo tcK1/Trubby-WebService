@@ -41,7 +41,11 @@ $stmt->closeCursor();
 $rs = $server->authorizeVerify();
 
 // Ve se a conbinação de chave e segredo existe
-$stmt = $db->prepare('SELECT * FROM oauth_server_registry WHERE osr_consumer_key = :consumer_key AND osr_consumer_secret = :consumer_secret');
+$stmt = $db->prepare(
+    'SELECT * FROM oauth_server_registry 
+    WHERE osr_consumer_key = :consumer_key 
+    AND osr_consumer_secret = :consumer_secret');
+    
 $stmt->execute(array(
     'consumer_key' => $dados[consumer_key],
     'consumer_secret' => $dados[consumer_secret]
