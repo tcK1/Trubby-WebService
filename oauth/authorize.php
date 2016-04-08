@@ -3,6 +3,25 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
 $dados = $_SESSION['opcoes'];
 
+$headers = getallheaders();
+print_r($headers); 
+
+$hora = date('H');
+echo $hora;
+
+
+// Duas informações serão recebidas do app
+
+// Email puro para identificar o cliente
+
+// Chave contruída com hash para autenticar
+
+// Hash composto de sha512(email.senha)
+
+
+
+die();
+
 // Ve se o valor recebido é valido e recupera o id do usuário
 $stmt = $db->prepare('SELECT osr_usa_id_ref FROM oauth_server_registry WHERE osr_consumer_key = :consumer_key');
 $stmt->execute(array(

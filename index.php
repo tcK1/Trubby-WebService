@@ -51,6 +51,14 @@ session_start();
 if(isset($_SESSION['opcoes'])) $opcoes = $_SESSION['opcoes'];
 
 OAuthStore::instance('Session', $opcoes);
+/*
+print_r(getallheaders());
+
+
+
+session_unset();
+session_destroy();
+die();*/
 
 if (empty($_GET['oauth_token'])) { // Caso ainda não possua um token, faz a requisição
 
@@ -73,6 +81,9 @@ else { // Ja com o token, pode fazer o chamado
 
     OAuthRequester::requestAccessToken($_SESSION['opcoes']['consumer_key'], $tokenResultParams['oauth_token'], $id, 'POST', $_GET);
 
+    // NEW
+    $chamado = new OAuthRequester(SERVIDOR . '/test_request.php', $_SESSION['METODO'], $_SESSION['parametros']);
+    /* OLD
     // De acordo com a seção definida na URL, redireciona para a página responsalvel.
     switch ($_SESSION['SECAO']){
         case 'usuario':
@@ -97,6 +108,7 @@ else { // Ja com o token, pode fazer o chamado
             header('Location: /index.php'); // **TROCAR POR PAG DE ERRO DE CHAMADA**
             break;
     }
+    */
  
     $resultado = $chamado->doRequest(0); // Executa a função
     

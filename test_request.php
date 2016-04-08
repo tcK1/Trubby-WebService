@@ -21,7 +21,9 @@ if (OAuthRequestVerifier::requestIsSigned()) {
             //echo json_encode(unserialize($_GET[0]));
             //teste($parametros);
             //print_r(teste\seraquevai());
-            echo json_encode(teste\seraquevai());
+            //echo json_encode(teste\seraquevai());
+            //echo json_encode(getallheaders());
+            echo json_encode($parametros);
         }
     }
     catch (OAuthException $e) {

@@ -7,11 +7,10 @@ header('X-XRDS-Location: http://' . $_SERVER['SERVER_NAME'] .
      '/vendor/oauth-php/oauth-php/example/server/www/services.xrds.php');
      
 // Cria a database para autenticação
-$db = new PDO('mysql:host=localhost;dbname=oauth', 'ztck', '12346Kaic');
+$db = new PDO('mysql:host=54.207.22.190:3306;dbname=oauth', 'trubby', 'raiztrubby');
      
 // Cria a database para modificação no banco
-$dbt = new PDO('mysql:host=localhost;dbname=trubby', 'ztck', '12346Kaic');
-
+$dbt = new PDO('mysql:host=54.207.22.190:3306;dbname=trubby', 'trubby', 'raiztrubby');
 
 // Cria nova instancia do OAuthStore e OAuthServer
 $store = OAuthStore::instance('PDO', array('conn' => $db));
