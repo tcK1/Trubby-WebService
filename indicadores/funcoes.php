@@ -102,7 +102,7 @@
     //calcular em toda a historia? ou da semana anterior? mes anterior? apenas nos dias que vendeu algo
     function mediaFaturamentoDiario($idUsuario, $dataInicial, $dataFinal){
         $stmt = $GLOBALS['dbt']->prepare(
-            'SELECT AVG(  `somas` ) 
+            'SELECT AVG(  `somas` ) as media
             FROM  `vendas_dia` 
             WHERE DATE
             BETWEEN  :dataInicial
@@ -114,8 +114,7 @@
             'dataFinal' => $dataFinal
         ));
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        print_r($resultado);
-        $faturamento = $resultado['AVG( `somas` )'];
+		$faturamento = $resultado['media'];
         return $faturamento;
     }
     
@@ -241,7 +240,7 @@
     //funcao para calcular o faturamento medio até um determinado horário
     function mediaFaturamentoHorario($idUsuario, $horaInicial, $horaFinal){
         $stmt = $GLOBALS['dbt']->prepare(
-            'SELECT AVG(  `somas` ) 
+            'SELECT AVG(  `somas` ) as media
             FROM  `vendas_dia` 
             WHERE  `TIME` 
             BETWEEN  :horaInicial
@@ -253,8 +252,7 @@
             'horaFinal' =>$horaFinal
         ));
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        $faturamento = $resultado['AVG( `somas` )'];
-        print_r($resultado);
+        $faturamento = $resultado['media'];
         return $faturamento;
     }
 ?>
