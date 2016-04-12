@@ -104,16 +104,17 @@
         $stmt = $GLOBALS['dbt']->prepare(
             'SELECT AVG(  `somas` ) 
             FROM  `vendas_dia` 
-            WHERE  `data` 
+            WHERE DATE
             BETWEEN  :dataInicial
             AND  :dataFinal
             AND  `id_usuario` =:idUsuario');
         $stmt->execute(array(
             'idUsuario' => $idUsuario,
-            'dataInicial' =>$dataInicial,
-            'dataFinal' =>$dataFinal,
+            'dataInicial' => $dataInicial,
+            'dataFinal' => $dataFinal
         ));
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        print_r($resultado);
         $faturamento = $resultado['AVG( `somas` )'];
         return $faturamento;
     }
@@ -235,5 +236,25 @@
         ));
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $resultado;
+    }
+    
+    //funcao para calcular o faturamento medio até um determinado horário
+    function mediaFaturamentoHorario($idUsuario, $horaInicial, $horaFinal){
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT AVG(  `somas` ) 
+            FROM  `vendas_dia` 
+            WHERE  `TIME` 
+            BETWEEN  :horaInicial
+            AND  :horaFinal
+            AND  `id_usuario` =:idUsuario');
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'horaInicial' =>$horaInicial,
+            'horaFinal' =>$horaFinal
+        ));
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $faturamento = $resultado['AVG( `somas` )'];
+        print_r($resultado);
+        return $faturamento;
     }
 ?>
