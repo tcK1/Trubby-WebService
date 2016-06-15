@@ -22,6 +22,31 @@
         return $quantidade;
     }
     
+    //usada para fazer a curva abc do faturamento
+    function produtosVendidosTempo($idUsuario,  $dataInicial, $dataFinal){
+        $produtos = Array();
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT SUM( quantidade ) AS quantidade, SUM( preco_venda ) AS faturamento , nome
+            FROM vendas_itens
+            INNER JOIN vendas ON vendas_itens.id_venda = vendas.id_venda
+            AND id_usuario =:idUsuario
+            INNER JOIN produto ON vendas_itens.id_produto = produto.id_produto
+            AND data
+            BETWEEN  :dataInicial
+            AND  :dataFinal
+            GROUP BY vendas_itens.id_produto
+            ORDER BY SUM( preco_venda ) DESC');
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $produtos;
+        
+
+    }
+    
     //funcao para retornar quanto gastou de tal item do estoque em tanto tempo
     function quantidadeEstoqueGastoTempo($nomeEstoque, $idUsuario, $dataInicial, $dataFinal){
         $quantidade =0;
@@ -202,7 +227,7 @@
         );
         //echo count($gastosEstoque);
         $aux = 0;
-        $estoque = array();;
+        $estoque = array();
         while($item = array_shift($gastosEstoque)){
             $stmt->execute(array(
                 'idProduto' => $item['id_produto']
@@ -254,5 +279,32 @@
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         $faturamento = $resultado['media'];
         return $faturamento;
+    }
+    
+    //usada para fazer curva abc do estoque
+    function precoEstoqueGastoTempo($idUsuario,  $dataInicial, $dataFinal){
+        $produtos = Array();
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT  `estoque_gasto`.`id_produto` , nome, SUM(  `gasto` ) ,  `data` , custo AS custo, 
+            (custo * SUM(  `gasto` )) AS total
+            FROM  `estoque_gasto` 
+            INNER JOIN estoque ON estoque.id_produto =  `estoque_gasto`.id_produto
+            INNER JOIN produto ON produto.id_produto =  `estoque_gasto`.id_produto
+            AND id_usuario =:idUsuario
+            AND data
+            BETWEEN  :dataInicial
+            AND  :dataFinal
+            GROUP BY  `estoque_gasto`.`id_produto` 
+            ORDER BY total DESC'
+        );
+        $stmt->execute(array(
+            'idUsuario' => $idUsuario,
+            'dataInicial' =>$dataInicial,
+            'dataFinal' =>$dataFinal,
+        ));
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $produtos;
+        
+
     }
 ?>
