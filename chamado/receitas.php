@@ -1,6 +1,4 @@
 <?php
-namespace receitas;
-
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 /*
  * Ponto de entrada para o controle de receitas na API Trubby.
@@ -37,24 +35,6 @@ function lista($parametros){
         
         return $resultado;
         
-        /*
-        $sql = "SELECT * FROM `fichas` WHERE `id_usuario` = '".$_GET[id_usuario]."'";
-
-        $resultado = mysql_query($sql);
-        
-        $retorno = array();
-        
-        // Lê todas as linhas de resultado e prepara o array que será transformado em JSON
-        for($i = 0; $linha = mysql_fetch_assoc($resultado); $i++){
-           $retorno[$i] = $linha;
-        }
-        
-        // print_r($retorno);
-        
-        // envia o JSON para o cliente
-        echo escreveJSON($retorno);
-        */
-        
     }
     else {
         
@@ -68,25 +48,22 @@ function lista($parametros){
         ));
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $resposta = mysql_fetch_assoc($resultado);
+        $resposta = $resultado;
         
         // encontra todos os ingredientes dessa receita e os armazena no array de resposta
-        $sql = "SELECT `ingredientes_uso`.*, `produto`.nome 
-                    FROM  `ingredientes_uso` LEFT JOIN `produto` 
-                    ON `ingredientes_uso`.id_estoque = `produto`.id_produto 
-                WHERE `id_ficha` = '".$_GET[id_produto]."'";
-        $resultado = mysql_query($sql);
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT ingredientes_uso.*, produto.nome 
+            FROM  ingredientes_uso LEFT JOIN produto 
+            ON ingredientes_uso.id_estoque = produto.id_produto 
+            WHERE id_ficha = :id_produto');
+        $stmt->execute(array(
+            'id_produto' => $parametros['PRODUTO']
+        ));
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $resposta['ingredientes'] = array();
+        $resposta['ingredientes'] = $resultado;
         
-        for($i = 0; $linha  = mysql_fetch_assoc($resultado); $i++){
-            $resposta['ingredientes'][$i] = $linha;
-        }
-        
-        // print_r($resposta);
-        
-        echo escreveJSON($resposta);
-        
+        return $resposta;
     }
 }
 
