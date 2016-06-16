@@ -18,12 +18,8 @@ if (OAuthRequestVerifier::requestIsSigned()) {
             
             
             // Formata os dados em um JSON
-            //echo json_encode(unserialize($_GET[0]));
-            //teste($parametros);
-            //print_r(teste\seraquevai());
-            //echo json_encode(teste\seraquevai());
-            //echo json_encode(getallheaders());
-            echo json_encode($parametros);
+            echo json_encode(teste\funcao($parametros));
+
         }
     }
     catch (OAuthException $e) {
@@ -35,8 +31,4 @@ if (OAuthRequestVerifier::requestIsSigned()) {
         echo $e->getMessage();
         exit();
     }
-}
-
-function teste($parametros){
-    echo json_encode($parametros);
 }

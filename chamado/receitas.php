@@ -20,11 +20,24 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 // ****************************************************************************
 // GET: recebe dados na URL da requisição HTTP. Essas dados podem ser id_usuario ou id_usuario e id_produto.
 // ****************************************************************************
-function lista(){
+function lista($parametros){
     
     // Se o id_produto não foi recebido, então lista todas as receitas do usuário dado
-    if(!isset($_GET['id_produto'])){
+    if(!isset($parametros['PRODUTO'])){
         
+        // Ve se o valor recebido é valido e recupera o id do usuário
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT * 
+            FROM fichas 
+            WHERE id_usuario = :id_usuario');
+        $stmt->execute(array(
+            'id_usuario' => $parametros['USUARIO']
+        ));
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $resultado;
+        
+        /*
         $sql = "SELECT * FROM `fichas` WHERE `id_usuario` = '".$_GET[id_usuario]."'";
 
         $resultado = mysql_query($sql);
@@ -40,12 +53,20 @@ function lista(){
         
         // envia o JSON para o cliente
         echo escreveJSON($retorno);
+        */
         
     }
     else {
+        
         // Se foi recebido também um id_produto, então entrega todos os dados relativos a essa receita, incluindo dados de ingredientes
-        $sql = "SELECT * FROM `fichas` WHERE `id_produto` = '".$_GET[id_produto]."'";
-        $resultado = mysql_query($sql);
+        $stmt = $GLOBALS['dbt']->prepare(
+            'SELECT * 
+            FROM fichas 
+            WHERE id_produto = :id_produto');
+        $stmt->execute(array(
+            'id_produto' => $parametros['PRODUTO']
+        ));
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         $resposta = mysql_fetch_assoc($resultado);
         

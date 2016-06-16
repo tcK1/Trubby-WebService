@@ -1,5 +1,5 @@
 <?php
-namespace estoque;
+//namespace estoque;
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
@@ -108,29 +108,25 @@ function deleta(){
 // Requisição GET: área que prepara a lista de itens de estoque do usuário determinado
 // ****************************************************************************
 // Exemplo de requisição /api/estoque.php?id_usuario=14
-function lista(){
+function lista($parametros){
     
-    $idusuario = $_GET['id_usuario'];
-    $sql = "SELECT * FROM `produto` INNER JOIN `estoque` ON produto.id_produto = estoque.id_produto WHERE id_usuario = '$idusuario'";
-    $aux = mysql_query($sql);
-    $resultado = queryParaArray($aux);
-    
-    // print_r($resultado);
+    // Ve se o valor recebido é valido e recupera o id do usuário
+    $stmt = $GLOBALS['dbt']->prepare(
+        'SELECT * 
+        FROM produto INNER JOIN estoque ON produto.id_produto = estoque.id_produto 
+        WHERE id_usuario = :id_usuario');
+    $stmt->execute(array(
+        'id_usuario' => $parametros['USUARIO']
+    ));
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // troca o separador decimal do campo de custo de ponto por vírgula
     for($i = 0; $i < sizeof($resultado); $i++){
         $resultado[$i]['custo'] = str_replace(".",",",$resultado[$i]['custo']);
     }
     
-    // Formata os dados em um JSON
-    $json_response = json_encode($resultado);
- 
-    // Declara o tipo de conteúdo a ser enviado para o cliente
-    header('Content-Type: application/json; charset=utf-8');
-  
-    // Envia os dados
-    echo $json_response;
-
+    return $resultado;
+    
 }
 
 // ********************************************************
@@ -195,6 +191,13 @@ function formatoReal($valor){
     } return false;
 }
 
+function queryParaArray($query){
+    $aaux = array();
+    while($r = mysql_fetch_assoc($query)) {
+        $aaux[] = $r;
+    }
+    return $aaux;
+}
 
 // ********************************************************
                 

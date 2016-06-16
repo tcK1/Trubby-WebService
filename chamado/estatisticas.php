@@ -1,4 +1,7 @@
 <?php
+namespace estatisticas;
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 
 /*
  * Recebe comandos relacionados a relatórios e estatísticas a serem computadas pela API Trubby.
@@ -8,10 +11,6 @@
 		saída: JSON com status (verde, amarelo e vermelho) de todos os itens de estoque atualmente em uso por itens de cardápio
 
  */
-
-require_once("functions.inc.php");
-require_once("connection.php");
-
 
 // ****************************************************************************
 // Checa qual o tipo de requisição recebida e encaminha o comando para a função adequada
