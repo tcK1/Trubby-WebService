@@ -15,37 +15,45 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/include/common.php';
 // Requisição POST envia 6 campos para esta página: id_usuario, id_produto, nome, quantidade, quantidade_tipo, custo.
 // Se o campo id_estoque for igual a 0, o webService entenderá que o item deve ser novo e fará a inserção.
 // Caso contrário, ele entenderá que se trata de uma atualização e fará as operações devidas para atualizar o item.
-function insere_modifica(){
-    
-    // Recebe os dados formatados em JSON entregues no corpo da requisição HTTP
-    $entrada = leJSON();
+function insere_modifica($parametros){
     
     // Se a requisição contiver erros, a execução será interrompida e o cliente receberá um código 400
-    if(!isset($entrada['id_produto'])) requisicao_incorreta();
+    if(!isset($parametros['id_produto'])) return -1;
     
     // corrige a separação decimal do campo custo
-    $entrada['custo'] = str_replace(",",".",$entrada['custo']);
+    $parametros['custo'] = str_replace(",",".",$entrada['custo']);
 
     // checa se a operação será uma inserção ou uma atualização
-    if($entrada['id_produto'] == 0){ // realiza a inserção
+    if($parametros['id_produto'] == 0){ // realiza a inserção
         
         // primeiro insere na tabela de produto e resgata o id_produto escolhido pelo banco de dados
-        $sql = "INSERT INTO `produto` (nome) VALUES ('".$entrada[nome]."')";
-        mysql_query($sql) or die("Erro na inserção de produto");
-        $id = mysql_insert_id();
+        $stmt = $GLOBALS['dbt']->prepare(
+        'INSERT INTO produto (nome)
+        VALUES (:nome)');
+        $stmt->execute(array(
+            'nome' => $parametros[nome]
+        ));
+        $id = $GLOBALS['dbt']->lastInsertId();
+
+        //$sql = "INSERT INTO `produto` (nome) VALUES ('".$entrada[nome]."')";
+        //mysql_query($sql) or die("Erro na inserção de produto");
+        //$id = mysql_insert_id();
+        
         
         // realiza a inserção equivalente na tabela de estoque
-        $sql = "
-            INSERT INTO `estoque` (id_produto,id_usuario,quantidade,quantidade_tipo,custo)
-                VALUES 
-                    ('".$id."',
-                    '".$entrada['id_usuario']."',
-                    '".$entrada['quantidade']."',
-                    '".$entrada['quantidade_tipo']."',
-                    '".$entrada['custo']."')";
+        $stmt = $GLOBALS['dbt']->prepare(
+        'INSERT INTO estoque (id_produto, id_usuario, quantidade, quantidade_tipo, custo)
+        VALUES (:id, :id_usuario, :quantidade, :quantidade_tipo, :custo)');
+        $stmt->execute(array(
+            'id' => $id,
+            'id_usuario' => $parametros[id_usuario],
+            'quantidade' => $parametros[quantidade],
+            'quantidade_tipo' => $parametros[quantidade_tipo],
+            'custo' => $parametros[custo]
+        ));
         
-                
-        mysql_query($sql) or die("Erro na inserção em estoque");
+        $resposta[mensagem] = 'Item inserido com sucesso';
+        return $resposta;
         
     }
     else { // realiza a atualização
@@ -116,7 +124,7 @@ function lista($parametros){
         FROM produto INNER JOIN estoque ON produto.id_produto = estoque.id_produto 
         WHERE id_usuario = :id_usuario');
     $stmt->execute(array(
-        'id_usuario' => $parametros['USUARIO']
+        'id_usuario' => $parametros[id_usuario]
     ));
     $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
     

@@ -12,7 +12,7 @@ if (strcasecmp($URL, 'registrar') == 0){
 }
 
 // Cria as variáveis em relação a url recebida
-list($SECAO, $USUARIO, $PRODUTO, $EXTRA) = explode("/", $URL);
+list($SECAO, $PRODUTO, $EXTRA) = explode("/", $URL);
 
 // Le o Header da requisição
 $header = getallheaders();
@@ -22,8 +22,8 @@ $parametros = array();
 if (!empty($SECAO)){
     $parametros['SECAO'] = $SECAO;
 }
-if (!empty($USUARIO)){
-    $parametros['USUARIO'] = $USUARIO;
+if (!empty($header[email])){
+    $parametros[email] = $header[email];
 }
 if (!empty($PRODUTO)){
     $parametros['PRODUTO'] = $PRODUTO;

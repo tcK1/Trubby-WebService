@@ -19,6 +19,19 @@ if (OAuthRequestVerifier::requestIsSigned()) {
             $secao = $parametros['SECAO']; // Define qual parte da api será utilizada
             unset($parametros['SECAO']);
             
+            $stmt = $GLOBALS['dbt']->prepare(
+                'SELECT id_usuario 
+                FROM usuarios 
+                WHERE email = :email');
+            $stmt->execute(array(
+                'email' => $parametros[email]
+            ));
+            $resposta = $stmt->fetch(PDO::FETCH_ASSOC);
+            $id_usuario = $resposta[id_usuario];
+            
+            $parametros[id_usuario] = $id_usuario;
+            unset($parametros[email]);
+            
             $resposta;
             
             // Para cada seção um conjunto de verbos com ações diferentes
@@ -89,6 +102,9 @@ if (OAuthRequestVerifier::requestIsSigned()) {
                     $resposta = requisicao_incorreta();
                     break;
             }
+            
+            // Caso tenha dado erro na requisição
+            if ($resposta == -1) $resposta = requisicao_incorreta();
             
             // Imprime a resposta em JSON
             echo json_encode($resposta);

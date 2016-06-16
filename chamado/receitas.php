@@ -29,7 +29,7 @@ function lista($parametros){
             FROM fichas 
             WHERE id_usuario = :id_usuario');
         $stmt->execute(array(
-            'id_usuario' => $parametros['USUARIO']
+            'id_usuario' => $parametros[id_usuario]
         ));
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
