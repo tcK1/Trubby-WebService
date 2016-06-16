@@ -31,7 +31,7 @@ if (OAuthRequestVerifier::requestIsSigned()) {
             
             $parametros[id_usuario] = $id_usuario;
             unset($parametros[email]);
-            
+
             $resposta;
             
             // Para cada seção um conjunto de verbos com ações diferentes
@@ -50,7 +50,8 @@ if (OAuthRequestVerifier::requestIsSigned()) {
                 case 'estoque':
                     include $_SERVER['DOCUMENT_ROOT'].'/chamado/estoque.php';
                     switch ($metodo) {
-                        case 'POST':    $resposta = insere_modifica($parametros);       break;
+                        case 'POST':    $resposta = insere($parametros);                break;
+                        case 'PUT':     $resposta = modifica($parametros);              break;
                         case 'GET':     $resposta = lista($parametros);                 break;
                         case 'DELETE':  $resposta = estoque\deleta($parametros);        break;
                         default:        $resposta = requisicao_incorreta();             break;
